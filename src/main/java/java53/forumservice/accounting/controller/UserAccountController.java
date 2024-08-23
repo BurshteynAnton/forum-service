@@ -20,7 +20,7 @@ public class UserAccountController {
 
     @GetMapping("/user/{login}")
     public UserDto getUser(String login) {
-        return userAccountService.removeUser(login);
+        return null;
     }
 
     @DeleteMapping("/user/{login}")
@@ -33,7 +33,7 @@ public class UserAccountController {
         return null;
     }
 
-    @Override
+
     public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
         return null;
     }
