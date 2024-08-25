@@ -8,9 +8,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Setter
 public class RolesDto {
-    String Login;
+    String login;
     @Singular
-    Set<String> Roles;
+    Set<String> roles;
 }

@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -12,10 +13,10 @@ import java.util.Set;
 
 @Getter
 @EqualsAndHashCode(of = "login")
-@NoArgsConstructor
 @Document(collection = "users")
 
 public class User {
+    @Id
     String login;
     @Setter
     String password;
@@ -24,17 +25,27 @@ public class User {
     @Setter
     String lastName;
     LocalDateTime dateCreated = LocalDateTime.now();
-    private Set<String> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
+
+    //for Model Mapper
+    public User() {
+        roles = new HashSet<>();
+        roles.add(Role.USER);
+    }
 
     public User(String login, String firstName,
-                String lastName, Set<String> roles) {
+                String lastName, String password) {
         this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.roles = roles;
+        this.password = password;
     }
 
-    public void addRole(String role) {
-        this.roles.add(role);
+    public boolean addRole(String role) {
+        return roles.add(Role.valueOf(role.toUpperCase()));
+    }
+
+    public boolean removeRole(String role) {
+        return roles.remove(Role.valueOf(role.toUpperCase()));
     }
 }

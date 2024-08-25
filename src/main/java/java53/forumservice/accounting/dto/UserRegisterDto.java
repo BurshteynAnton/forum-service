@@ -4,11 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class UserRegisterDto {
-        String Login;
+        String login;
         String password;
         String firstName;
         String lastName;
-
-
-
 }

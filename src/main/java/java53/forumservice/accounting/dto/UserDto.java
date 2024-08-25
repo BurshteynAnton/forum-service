@@ -1,21 +1,17 @@
 package java53.forumservice.accounting.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
+import lombok.*;
 
 import java.util.Set;
 
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UserDto {
-    String Login;
+    String login;
     String firstName;
     String lastName;
     @Singular
     Set<String> roles;
-
-
 }
