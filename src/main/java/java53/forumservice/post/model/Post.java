@@ -55,4 +55,8 @@ public class Post {
     public boolean removeComment(Comment comment) {
         return comments.remove(comment);
     }
+
+    public String getOwner() {
+        return author;
+    }
 }

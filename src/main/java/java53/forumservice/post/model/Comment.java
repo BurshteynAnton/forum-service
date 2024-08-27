@@ -27,4 +27,7 @@ public class Comment {
         likes++;
     }
 
+    public String getAuthor() {
+        return user;
+    }
 }
