@@ -3,38 +3,38 @@ package java53.forumservice.security.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java53.forumservice.accounting.dao.UserAccountRepository;
-import java53.forumservice.accounting.model.Role;
-import java53.forumservice.accounting.model.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
-@Order(20)
-public class AdminManagingRolesFilter implements Filter {
+@Order(30)
+public class UpdateByOwnerFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
         if (checkEndpoint(request.getMethod(), request.getServletPath())) {
-            User user = (User) request.getUserPrincipal();
-            if (!user.getRoles().contains(Role.ADMINISTRATOR.name())) {
-                response.sendError(403, "You are not allowed to access this resource");
+            String principal = request.getUserPrincipal().getName();
+            String[] parts = request.getServletPath().split("/");
+            String owner = parts[parts.length - 1];
+            if (!principal.equalsIgnoreCase(owner)) {
+                response.sendError(403, "Not authorized");
                 return;
             }
         }
-
         chain.doFilter(request, response);
     }
 
     private boolean checkEndpoint(String method, String path) {
-        return path.matches("/account/user/\\w+/role/\\w+");
+        return (
+                HttpMethod.PUT.matches(method) && path.matches("/account/user/\\w+")
+               || HttpMethod.POST.matches(method) && path.matches("/forum/post/\\w+")
+                || HttpMethod.PUT.matches(method) && path.matches("/forum/post/\\w+/comment/\\w+")
+        );
     }
-
 }

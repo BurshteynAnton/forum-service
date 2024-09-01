@@ -110,5 +110,6 @@
 		<level name="Maven: org.springframework:spring-test:6.1.11" value="project"/>
 		<level name="Maven: org.xmlunit:xmlunit-core:2.9.1" value="project"/>
 		<level name="Maven: org.modelmapper:modelmapper:3.0.0" value="project"/>
+		<level name="Maven: org.mindrot:jbcrypt:0.4" value="project"/>
 	</levels>
 </component>

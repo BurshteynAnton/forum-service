@@ -6,14 +6,19 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java53.forumservice.accounting.dao.UserAccountRepository;
 import java53.forumservice.accounting.model.User;
+import java53.forumservice.accounting.model.Role;
+import java53.forumservice.security.model.UserAcc;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Base64;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +39,10 @@ public class AuthenticationFilter implements Filter {
                 if (!BCrypt.checkpw(credentials[1], user.getPassword())) {
                     throw new RuntimeException();
                 }
-                request = new WrappedRequest(request, user.getLogin());
+                Set<String> roles = user.getRoles().stream()
+                        .map(Role::name)
+                        .collect(Collectors.toSet());
+                request = new WrappedRequest(request, user.getLogin(), roles);
             } catch (Exception e) {
                 response.sendError(401);
                 return;
@@ -44,7 +52,10 @@ public class AuthenticationFilter implements Filter {
     }
 
     private boolean checkEndpoint(String method, String path) {
-        return !("POST".equalsIgnoreCase(method) && path.matches("/account/register"));
+        return !(
+                (HttpMethod.POST.matches(method) && path.matches("/account/register"))
+                        || HttpMethod.GET.matches(method) && path.matches("/forum/posts.+")
+        );
     }
 
     private String[] getCredentials(String header) {
@@ -55,15 +66,17 @@ public class AuthenticationFilter implements Filter {
 
     private class WrappedRequest extends HttpServletRequestWrapper {
         private String login;
+        private Set<String> roles;
 
-        public WrappedRequest(HttpServletRequest request, String login) {
+        public WrappedRequest(HttpServletRequest request, String login, Set<String> roles) {
             super(request);
             this.login = login;
+            this.roles = roles;
         }
 
         @Override
         public Principal getUserPrincipal() {
-            return () -> login;
+            return new UserAcc(login, roles);
         }
     }
 }

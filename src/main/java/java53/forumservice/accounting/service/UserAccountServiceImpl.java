@@ -7,15 +7,17 @@ import java53.forumservice.accounting.dto.UserEditDto;
 import java53.forumservice.accounting.dto.UserRegisterDto;
 import java53.forumservice.accounting.dto.exception.UserExistsException;
 import java53.forumservice.accounting.dto.exception.UserNotFoundException;
+import java53.forumservice.accounting.model.Role;
 import java53.forumservice.accounting.model.User;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserAccountServiceImpl implements UserAccountService {
+public class UserAccountServiceImpl implements UserAccountService, CommandLineRunner {
 
     final UserAccountRepository userAccountRepository;
     final ModelMapper modelMapper;
@@ -82,5 +84,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     String password = BCrypt.hashpw(newPassword, BCrypt.gensalt());
     user.setPassword(password);
     userAccountRepository.save(user);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if(!userAccountRepository.existsById("admin")) {
+            String password = BCrypt.hashpw("admin", BCrypt.gensalt());
+            User user = new User("admin", "", "", password);
+            user.addRole(Role.MODERATOR.name());
+            user.addRole(Role.ADMINISTRATOR.name());
+            userAccountRepository.save(user);
+        }
     }
 }

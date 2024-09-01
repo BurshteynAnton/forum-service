@@ -18,4 +18,5 @@ public interface UserAccountService {
 
     void changePassword(String login, String newPassword);
 
+    void run(String... args) throws Exception;
 }
