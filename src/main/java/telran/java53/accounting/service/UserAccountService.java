@@ -4,11 +4,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import telran.java53.accounting.dto.RolesDto;
 import telran.java53.accounting.dto.UserDto;
 import telran.java53.accounting.dto.UserEditDto;
-import telran.java53.accounting.dto.UserRegisterDto;
 import telran.java53.accounting.model.UserAccount;
 
 public interface UserAccountService extends UserDetailsService {
-	UserDto register(UserRegisterDto userRegisterDto);
 
 	UserDto getUser(String login);
 

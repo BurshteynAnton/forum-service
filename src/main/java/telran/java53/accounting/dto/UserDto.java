@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
+import telran.java53.accounting.model.Role;
 
 @Getter
 @AllArgsConstructor
@@ -18,5 +19,7 @@ public class UserDto {
     String lastName;
     String email;
     @Singular
-    Set<String> roles;
+    Set<Role> roles;
+
+
 }

@@ -51,8 +51,6 @@ public class Post {
 
 	}
 
-	// Getters and setters omitted for brevity
-
 	public void addLike() {
 		likes++;
 	}
@@ -66,7 +64,7 @@ public class Post {
 	}
 
 	public void addComment(Comment comment) {
-		comment.setPost(this); // Set the post reference in the Comment
+		comment.setPost(this);
 		comments.add(comment);
 	}
 

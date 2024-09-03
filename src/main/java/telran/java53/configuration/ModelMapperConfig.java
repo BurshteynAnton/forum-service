@@ -14,7 +14,6 @@ import telran.java53.accounting.service.UserAccountService;
 @Configuration
 public class ModelMapperConfig {
 
-//	private final UserAccountService userAccountService;
 
 
 	@Bean
