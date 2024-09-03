@@ -1,58 +1,80 @@
 package telran.java53.post.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Getter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
-@Document(collection = "posts")
+@Entity
 public class Post {
-    String id;
-    @Setter
-    String title;
-    @Setter
-    String content;
-    @Setter
-    String author;
-    LocalDateTime dateCreated = LocalDateTime.now();
-    Set<String> tags = new HashSet<>();
-    int likes;
-    List<Comment> comments = new ArrayList<>();
 
-    public Post(String title) {
-        this.title = title;
-        this.content = content;
-        this.author =  author;
-        this.tags = tags;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    public void addLike() {
-        likes++;
-    }
+	@Setter
+	private String title;
 
-    public boolean addTag(String tag) {
-        return tags.add(tag);
-    }
+	@Setter
+	private String content;
 
-    public boolean removeTag(String tag) {
-        return tags.remove(tag);
-    }
+	@Setter
+	private String
+			author;
 
-    public boolean addComment(Comment comment) {
-        return comments.add(comment);
-    }
+	private LocalDateTime
+			dateCreated = LocalDateTime.now();
 
-    public boolean removeComment(Comment comment) {
-        return comments.remove(comment);
-    }
+	@ManyToMany
+	private Set<Tag> tags = new HashSet<>();
+
+	private int likes;
+
+	@OneToMany(mappedBy = "post")
+	private List<Comment> comments = new ArrayList<>();
+
+	public Post(String title, String content, String author, Set<Tag> tags) {
+		this.title = title;
+		this.content = content;
+		this.author = author;
+		this.tags = tags;
+
+	}
+
+	// Getters and setters omitted for brevity
+
+	public void addLike() {
+		likes++;
+	}
+
+	public boolean addTag(Tag tag) {
+		return tags.add(tag);
+	}
+
+	public boolean removeTag(Tag tag) {
+		return tags.remove(tag);
+	}
+
+	public void addComment(Comment comment) {
+		comment.setPost(this); // Set the post reference in the Comment
+		comments.add(comment);
+	}
+
+	public boolean removeComment(Comment comment) {
+		return comments.remove(comment);
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
 }

@@ -1,30 +1,47 @@
 package telran.java53.post.model;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
-@Getter
 @NoArgsConstructor
-@AllArgsConstructor
+@Setter
+@Getter
+@Entity
 public class Comment {
-    @Setter
-    String user;
-    @Setter
-    String message;
-    LocalDateTime dateCreated = LocalDateTime.now();
-    int likes;
 
-    public Comment(String user,String message) {
-        this.user = user;
-        this.message = message;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    public void addLike() {
-        likes++;
-    }
+	@ManyToOne
+	private Post post;
 
+	@Column(name = "username")
+	@Setter
+	private String user;
+
+	@Setter
+	private String message;
+
+	private LocalDateTime dateCreated = LocalDateTime.now();
+
+	private int likes;
+
+	public Comment(String user, String message) {
+		this.user = user;
+		this.message = message;
+	}
+
+	public void addLike() {
+		likes++;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
 }
