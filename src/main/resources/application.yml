@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/forum
-    username: *******
+    username:
     password: "*******"
     driver-class-name: org.postgresql.Driver
 
