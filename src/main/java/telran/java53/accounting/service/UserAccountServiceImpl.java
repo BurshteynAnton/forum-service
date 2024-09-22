@@ -1,5 +1,6 @@
 package telran.java53.accounting.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserAccountServiceImpl implements UserAccountService, CommandLineRunner, UserDetailsService {
 
 	private final static String USER_NOT_FOUND_MSG = "User with %s Not Found";
@@ -112,29 +114,65 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
 	}
 
 	public String signUpUser(UserAccount userAccount) {
-		boolean userExists = userAccountRepository
-				.findByEmail(userAccount.getEmail())
-				.isPresent();
-		if (userExists) {
-			throw new IllegalStateException("email already taken");
+		// Проверка существования пользователя
+		if (userAccountRepository.findByEmail(userAccount.getEmail()).isPresent()) {
+			throw new IllegalStateException("Email already taken");
 		}
+
+		// Кодирование пароля
 		String encodedPassword = bCryptPasswordEncoder.encode(userAccount.getPassword());
 		userAccount.setPassword(encodedPassword);
 
+		// Устанавливаем статус пользователя как неактивный
+		userAccount.setEnabled(false);
+
+		// Сохранение пользователя
 		userAccountRepository.save(userAccount);
 
+		// Генерация токена подтверждения
 		String token = UUID.randomUUID().toString();
 
+		// Создание объекта ConfirmationToken
 		ConfirmationToken confirmationToken = new ConfirmationToken(
 				token,
 				LocalDateTime.now(),
 				LocalDateTime.now().plusMinutes(15),
 				userAccount
 		);
+
+		// Сохранение токена
 		confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+		// Логирование
+		log.info("User registered: {}. Confirmation token created.", userAccount.getEmail());
 
 		return token;
 	}
+
+//	public String signUpUser(UserAccount userAccount) {
+//		boolean userExists = userAccountRepository
+//				.findByEmail(userAccount.getEmail())
+//				.isPresent();
+//		if (userExists) {
+//			throw new IllegalStateException("email already taken");
+//		}
+//		String encodedPassword = bCryptPasswordEncoder.encode(userAccount.getPassword());
+//		userAccount.setPassword(encodedPassword);
+//
+//		userAccountRepository.save(userAccount);
+//
+//		String token = UUID.randomUUID().toString();
+//
+//		ConfirmationToken confirmationToken = new ConfirmationToken(
+//				token,
+//				LocalDateTime.now(),
+//				LocalDateTime.now().plusMinutes(15),
+//				userAccount
+//		);
+//		confirmationTokenService.saveConfirmationToken(confirmationToken);
+//
+//		return token;
+//	}
 
 	public UserDto updateUserAccountStatus(String login, boolean enabled) {
 		UserAccount userAccount = userAccountRepository.findById(login)

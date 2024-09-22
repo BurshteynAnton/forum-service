@@ -32,8 +32,8 @@ public class SecurityConfiguration {
 		http.csrf(csrf -> csrf.disable());
 //		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 		http.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/account/register", "/forum/posts/**")
-					.permitAll()
+						.requestMatchers("/account/register", "/account/register/confirm", "/forum/posts/**")
+						.permitAll()
 				.requestMatchers("/account/user/{login}/role/{role}")
 					.hasRole(Role.ADMINISTRATOR.name())
 				.requestMatchers(HttpMethod.PUT, "/account/user/{login}")

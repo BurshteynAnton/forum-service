@@ -20,6 +20,7 @@ import telran.java53.accounting.dto.UserDto;
 import telran.java53.accounting.dto.UserEditDto;
 import telran.java53.accounting.dto.UserRegisterDto;
 import telran.java53.accounting.service.UserAccountService;
+//import telran.java53.registration.RegistrationRequest;
 import telran.java53.registration.RegistrationService;
 
 @RestController
@@ -28,6 +29,11 @@ import telran.java53.registration.RegistrationService;
 public class UserAccountController {
 	final UserAccountService userAccountService;
 	private final RegistrationService registrationService;
+
+//	@PostMapping("/register")
+//	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
+//		return registrationService.register(userRegisterDto);
+//	}
 
 //	@PostMapping("/register")
 //	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "forum")
+@Table
 public class UserAccount implements UserDetails {
 
 	@Id

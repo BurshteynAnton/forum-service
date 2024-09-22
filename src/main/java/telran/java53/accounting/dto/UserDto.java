@@ -20,6 +20,4 @@ public class UserDto {
     String email;
     @Singular
     Set<Role> roles;
-
-
 }

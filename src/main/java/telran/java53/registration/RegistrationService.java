@@ -3,6 +3,8 @@ package telran.java53.registration;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import telran.java53.accounting.dto.UserDto;
+import telran.java53.accounting.dto.UserRegisterDto;
 import telran.java53.accounting.model.UserAccount;
 import telran.java53.accounting.service.UserAccountService;
 import telran.java53.email.EmailSender;
@@ -22,7 +24,7 @@ public class RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
-    public String register(RegistrationRequest request) {
+    public UserDto register(UserRegisterDto request) {
         boolean isValidEmail = emailValidator.test(request.getEmail());
         if (!isValidEmail) {
             throw new IllegalStateException("email not valid");
@@ -35,17 +37,19 @@ public class RegistrationService {
                 request.getPassword(),
                 Collections.singleton(Role.USER)
         );
+
         String token = userAccountService.signUpUser(userAccount);
+
         String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
-
-        emailSender.send(
-                request.getEmail(),
-                buildEmail(request.getFirstName(), link)
-        );
-
-        return token;
+        emailSender.send(request.getEmail(), buildEmail(request.getFirstName(), link));
+        return UserDto.builder()
+                .login(userAccount.getLogin())
+                .firstName(userAccount.getFirstName())
+                .lastName(userAccount.getLastName())
+                .email(userAccount.getEmail())
+                .roles(userAccount.getRoles()) // если роли есть
+                .build();
     }
-
 
     @Transactional
     public String confirmToken(String token) {

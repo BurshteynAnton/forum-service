@@ -1,12 +1,14 @@
 package telran.java53.accounting.dto;
 
-import lombok.Getter;
+import lombok.*;
+import telran.java53.accounting.model.Role;
+
+import java.util.Set;
 
 @Getter
-public class UserRegisterDto {
-	String login;
+@AllArgsConstructor
+@NoArgsConstructor
+//@Builder
+public class UserRegisterDto extends UserDto {
     String password;
-    String firstName;
-    String lastName;
-    String email;
 }
